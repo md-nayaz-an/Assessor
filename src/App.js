@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { ThemeProvider, createTheme, useMediaQuery } from "@mui/material";
+import Home from "./Home";
 
 function App() {
+  const screenQuery = useMediaQuery('(min-width: 576px) and (max-width: 991.98px)');
+
+  const theme = createTheme({
+    palette: {
+      mode: 'light',
+      primary: {
+        main: '#27005D',
+      },
+      secondary: {
+        main: '#9400FF',
+      },
+      background: {
+        default: '#E4F1FF',
+        paper: '#aed2ff',
+      },
+    },
+    breakpoints: {
+      values: {
+        xs: screenQuery ? 1 : 0,
+        lg: 1024,
+      }
+    }
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Home />
+    </ThemeProvider>
   );
 }
 
