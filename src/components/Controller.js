@@ -1,82 +1,29 @@
-import { Button, ButtonGroup, Grid, Paper, Slider, useTheme } from "@mui/material";
+import { Button, Grid, Paper } from "@mui/material";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
-import YouTube from "react-youtube";
 import { useEffect, useRef, useState } from "react";
-import formattedSeconds from "../utils/formatSeconds";
-
-let videoElement = null;
+import ReactPlayer from "react-player";
 
 export default function Controller(props) {
     
-    const theme = useTheme();
     const yref = useRef();
 
-    const opts = {
-        height: '390',
-        width: '693',
-        playerVars: {
-            autoplay: 0,
-        },
-    };
 
     const [isPaused, setIsPaused] = useState(false);
-
-    useEffect(() => {
-        if (videoElement) {
-        // get current time
-        const elapsed_seconds = videoElement.target.getCurrentTime();
-
-        if(!isPaused)
-            console.log(formattedSeconds(elapsed_seconds));
-
-        // Pause and Play video
-        if (isPaused) {
-            videoElement.target.pauseVideo();
-        } else {
-            videoElement.target.playVideo();
-        }
-        }
-    }, [isPaused, videoElement]);
-
-    //get current time and video status in real time
-    useEffect(() => {
-        const interval = setInterval(async () => {
-        if (videoElement && videoElement.target.getCurrentTime() > 0) {
-            const elapsed_seconds = videoElement.target.getCurrentTime();
-
-            if(!isPaused)
-                console.log(formattedSeconds(elapsed_seconds));
-
-            // verify video status
-            if (videoElement.target.playerInfo.playerState === 1) {
-            //console.log("the video is running");
-            } else if (videoElement.target.playerInfo.playerState === 2) {
-            //console.log("the video is paused");
-            }
-        }
-        }, 1000);
-
-        return () => {
-        clearInterval(interval);
-        };
-    }, []);
-
-    const _onReady = (event) => {
-        videoElement = event;
-    };
-
+    const [elapsed, setElapsed] = useState(0);
 
     const handlePlay = () => {
-        setIsPaused(false);
+        if(isPaused)
+            setIsPaused(false);
     };
 
     const handlePause = () => {
-        setIsPaused(true);
+        if(!isPaused)
+            setIsPaused(true);
     };
 
     const handlePrev = () => {
@@ -88,6 +35,17 @@ export default function Controller(props) {
         // Implement your end logic here
         console.log("Next");
     };
+
+    const onProgress = e => {
+        setElapsed(e.playedSeconds);
+    }
+
+    const add = () => {
+        props.addNewMarker(elapsed);
+    }
+
+    useEffect(() => {
+    }, [elapsed])
     
     return (
         <Grid
@@ -96,11 +54,13 @@ export default function Controller(props) {
             alignItems="center"
             rowGap={1}
         >
-            <YouTube
+            <ReactPlayer
                 ref={yref}
-                videoId={props.videoId}
-                opts={opts}
-                onReady={_onReady}
+                url={props.videoId}
+                height='390px'
+                width='693px'
+                playing={!isPaused}
+                onProgress={onProgress}
             />
 
             <Paper
@@ -147,7 +107,10 @@ export default function Controller(props) {
                     columnGap: 1
                 }}
             >
-                <Button variant="contained">
+                <Button 
+                    variant="contained"
+                    onClick={add}
+                >
                     <ControlPointIcon fontSize="small" sx={{marginRight: 1}}/>
                     Add Marker
                 </Button>

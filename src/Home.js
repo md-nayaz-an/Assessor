@@ -1,9 +1,9 @@
-import { Grid, styled, useTheme } from "@mui/material";
-import { useState } from "react";
+import { Grid, List, ListItemButton, ListItemText, styled, useTheme } from "@mui/material";
+import { useRef, useState } from "react";
 
 import Search from "./components/Search";
 import Controller from "./components/Controller";
-import Marks from "./components/Marks";
+import Details from "./components/Details";
 
 export default function Home() {
     const StyledGrid = styled(Grid)(({ theme }) => ({
@@ -16,7 +16,7 @@ export default function Home() {
         gridAutoFlow: 'row',
         width: '100%',
         height: "100%",
-        padding: theme.spacing(4),
+        padding: theme.spacing(2),
         backgroundColor: theme.palette.background.default,
 
         [theme.breakpoints.up('lg')]: {
@@ -30,20 +30,35 @@ export default function Home() {
 
     const [videoId, setVideoId] = useState('');
 
-    
+    const detailsRef = useRef(null);
+
+    const addNewMarker = (duration) => {
+        // Call the addNewMarker function from the child component using the ref
+        if (detailsRef.current) {
+            detailsRef.current.addNewMarker(duration);
+        }
+    };
 
     return(
 
         <StyledGrid>
-
-            
             <Grid
                 sx={{
                     backgroundColor: theme.palette.background.paper,
                     gridArea: "1 / 1 / 17 / 3",
+                    overflowY: "scroll",
                 }}
             >
-
+                <List>
+                    <ListItemButton
+                        selected={true}
+                    >
+                        <ListItemText
+                            primary="Video 1"
+                            secondary="Description"
+                        />
+                    </ListItemButton>
+                </List>
             </Grid>
 
             <Grid
@@ -64,25 +79,19 @@ export default function Home() {
 
                 <Controller
                     videoId={videoId}
+                    addNewMarker={addNewMarker}
                 />
             </Grid>
             
             <Grid
                 sx={{
-                    backgroundColor: theme.palette.background.paper,
-                    gridArea: "1 / 10 / 8 / 13",
+                    backgroundColor: theme.palette.background.default,
+                    gridArea: "1 / 10 / 17 / 13",
                 }}
             >
-                <Marks />
-            </Grid>
-
-            <Grid
-                sx={{
-                    backgroundColor: theme.palette.background.paper,
-                    gridArea: "8 / 10 / 17 / 13",
-                }}
-            >
-
+                <Details
+                    ref={detailsRef}
+                />
             </Grid>
         </StyledGrid>
     )

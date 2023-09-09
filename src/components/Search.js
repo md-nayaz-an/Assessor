@@ -18,7 +18,7 @@ export default function Search (props) {
 
         if(id) {
             setErr(false);
-            props.setVideoId(id);
+            props.setVideoId(url);
         }
         else {
             setErr(true);
