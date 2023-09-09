@@ -5,7 +5,7 @@ import videoIdParser from "../utils/videoIdParser";
 export default function Search (props) {
 
 
-    const [url, setUrl] = useState('https://youtu.be/d0xR_GsZAoY?si=yd9zUCRv4_oYmUA1');
+    const [url, setUrl] = useState('');
     const [err, setErr] = useState(false);
 
     const onChange = (e) => {

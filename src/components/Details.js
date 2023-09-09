@@ -22,9 +22,17 @@ const Details = forwardRef((props, ref) => {
                 markerDuration: duration,
                 summary: "",
                 question: "",
-                options: [],
+                options: [
+                    {
+                        optionId: 1,
+                        option: "",
+                        isCorrect: false,
+                    }
+                ],
             }
         ]);
+
+        console.log(markerLis);
     };
     
     useEffect(()=> {
@@ -49,7 +57,7 @@ const Details = forwardRef((props, ref) => {
             {
                 (selected !== -1) && 
                 <Edit 
-                    markItem={markerLis[selected]}
+                    markItem={markerLis[selected-1]}
                 />
             }
         </Grid>

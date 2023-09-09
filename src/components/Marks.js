@@ -17,6 +17,7 @@ export default function Marks (props) {
             sx={{
                 backgroundColor: theme.palette.background.paper,
                 overflowY: "scroll",
+                borderRadius: 1,
             }}
         >
             <List>

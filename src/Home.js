@@ -10,7 +10,7 @@ export default function Home() {
         display: 'grid',
         gridAutoColumns: '1fr',
         gridAutoRows: '1fr',
-        gridGap: '1em 1em',
+        gridGap: '0.5em 0.5em',
         placeItems: 'stretch stretch',
         placeContent: 'stretch stretch',
         gridAutoFlow: 'row',
@@ -47,6 +47,7 @@ export default function Home() {
                     backgroundColor: theme.palette.background.paper,
                     gridArea: "1 / 1 / 17 / 3",
                     overflowY: "scroll",
+                    borderRadius: 1,
                 }}
             >
                 <List>
@@ -70,7 +71,8 @@ export default function Home() {
 
                 sx={{
                     backgroundColor: theme.palette.background.paper,
-                    gridArea: "1 / 3 / 17 / 10"
+                    gridArea: "1 / 3 / 17 / 10",
+                    borderRadius: 1,
                 }}
             >
                 <Search
