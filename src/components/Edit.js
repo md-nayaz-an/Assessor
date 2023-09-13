@@ -1,10 +1,25 @@
 import { Button, Checkbox, Grid, TextField, useTheme } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Edit(props) {
+    
     const theme = useTheme();
 
+    const [title, setTitle] = useState(props.markItem.title);
+    const [summary, setSummary] = useState(props.markItem.summary);
+    const [question, setQuestion] = useState(props.markItem.question);
+    const [options, setOptions] = useState(props.markItem.options);
+
+    useEffect(() => {
+        setTitle(props.markItem.title);
+        setSummary(props.markItem.summary);
+        setQuestion(props.markItem.question);
+        setOptions(props.markItem.options);
+
+        console.log(props.markItem);
+    }, [props.markItem]);
+    
     return(
         <Grid
             display="flex"
@@ -25,7 +40,8 @@ export default function Edit(props) {
                 id="title"
                 label="Title"
 
-                value={props.markItem.title}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
             />
 
             <TextField
@@ -36,30 +52,36 @@ export default function Edit(props) {
 
                 minRows={2}
                 maxRows={4}
-                value={props.markItem.Summary}
+
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
             />
 
             <TextField
-
-                id="question"
                 label="Question"
 
-                value={props.markItem.question}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
             />
 
             <Options
-                options={props.markItem.options}
+                options={options}
+                setOptions={setOptions}
             />
 
+            <Button
+                variant="contained"
+            >
+                Save
+            </Button>
         </Grid>
     )
 }
 
 function Options(props) {
 
-    const [options, setOptions] = useState(props.options);
     const addNewOption = () => {
-        setOptions(options => [
+        props.setOptions(options => [
             ...options,
             {
                 optionId: options.length + 1,
@@ -68,10 +90,15 @@ function Options(props) {
             }
         ])
     }
+
+    useEffect(() => {
+//        console.log(props.options);
+    }, [props])
+
     return(
         <>
             {
-                options.map((item, key) => {
+                props.options.map((item, key) => {
                     return(
                         <Grid
                             display="flex"
@@ -82,8 +109,8 @@ function Options(props) {
                             <TextField
                                 size="small"
 
-                                id={"option" + item.optionId}
-                                label={"Option " + item.optionId}
+                                id={"option" + item.option}
+                                label={"Option " + item.option}
                                 value={item.option}
 
                                 sx={{

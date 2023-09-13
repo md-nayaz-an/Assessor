@@ -1,7 +1,12 @@
 function videoIdParser(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    var match = url.match(regExp);
-    return (match&&match[7].length === 11)? match[7] : false;
+    try {
+        var match = url.match(regExp);
+        return (match&&match[7].length === 11)? match[7] : false;
+    }
+    catch(err) {
+        return false;
+    }
 }
 
 export default videoIdParser;

@@ -5,7 +5,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import ReactPlayer from "react-player";
 
 export default function Controller(props) {
@@ -44,8 +44,9 @@ export default function Controller(props) {
         props.addNewMarker(elapsed);
     }
 
-    useEffect(() => {
-    }, [elapsed])
+    const onReady = () => {
+
+    }
     
     return (
         <Grid
@@ -56,11 +57,12 @@ export default function Controller(props) {
         >
             <ReactPlayer
                 ref={yref}
-                url={props.videoId}
+                url={props.videoUrl}
                 height='390px'
                 width='693px'
                 playing={!isPaused}
                 onProgress={onProgress}
+                onReady={onReady}
             />
 
             <Paper

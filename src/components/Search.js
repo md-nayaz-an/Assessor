@@ -1,32 +1,46 @@
 import { Button, Grid, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import videoIdParser from "../utils/videoIdParser";
 
 export default function Search (props) {
 
 
-    const [url, setUrl] = useState('');
+    const [url, setUrl] = useState(props.videoUrl);
     const [err, setErr] = useState(false);
+    const [save, setSave] = useState(false);
 
     const onChange = (e) => {
         setUrl(e.target.value);
     }
 
-    const onSubmit = (e, url) => {
+    const onSearch = (e, url) => {
         e.preventDefault();
         let id = videoIdParser(url);
 
         if(id) {
             setErr(false);
-            props.setVideoId(url);
+            props.setVideoUrl(url);
+            setSave(true);
         }
         else {
             setErr(true);
         }
     }
+
+    const onSave = () => {
+        props.onSave();
+    }
+
+    useEffect(() => {
+        console.log(props.videoUrl);
+
+        if(props.videoUrl !== '')
+            setSave(true);
+    }, [props.videoUrl])
+
     return(
         <form
-            onSubmit={props.onSubmit}
+            onSubmit={(e) => onSearch(e, url)}
             style={{
                 width: "100%"
             }}
@@ -44,6 +58,9 @@ export default function Search (props) {
                     size="small"
                     label="YouTube URL"
                     placeholder="Paste the YouTube URL"
+                    InputProps={{
+                        readOnly: props.edit,
+                    }}
                     
                     onChange={onChange}
                     value={url}
@@ -58,10 +75,21 @@ export default function Search (props) {
 
                 <Button
                     variant="contained"
-                    onClick={(e) => onSubmit(e, url)}
+                    onClick={(e) => onSearch(e, url)}
                 >
                     Search
                 </Button>
+                {
+                    (save) ? 
+                    <Button
+                        variant="contained"
+                        onClick={onSave}
+                    >
+                        save
+                    </Button>
+                    :                 
+                    <></>
+                }
         </Grid>
         </form>
     )

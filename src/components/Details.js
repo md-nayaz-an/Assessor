@@ -12,14 +12,34 @@ const Details = forwardRef((props, ref) => {
     const [markerLis, setMarkerLis] = useState([]);
     const [selected, setSelected] = useState(-1);
 
-    const addNewMarker = (duration) => {
+
+    useEffect(()=> {
+        fetch(`http://localhost:8000/questions/list/${props.videoId}`, {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                setMarkerLis(data)
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+    }, [props.videoId]);
+    
+    const taddNewMarker = (duration) => {
         console.log(duration);
         setMarkerLis((prevMarkers) => [
             ...prevMarkers, 
             {
                 id: prevMarkers.length + 1,
                 title: "New Title " + (prevMarkers.length + 1),
-                markerDuration: duration,
+                timestamp: duration,
                 summary: "",
                 question: "",
                 options: [
@@ -34,11 +54,53 @@ const Details = forwardRef((props, ref) => {
 
         console.log(markerLis);
     };
+
+    const addNewMarker = (duration) => {
+        console.log(duration);
+
+        fetch('http://localhost:8000/questions/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                videoid: props.videoId,
+                timestamp: duration
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+
+                setMarkerLis((prevMarkers) => [
+                    ...prevMarkers, 
+                    {
+                        _id: data.questionid,
+                        title: "New Title " + (prevMarkers.length + 1),
+                        timestamp: duration,
+                        summary: "",
+                        question: "",
+                        options: [],
+                    }
+                ]);
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+
+        
+
+        console.log(markerLis);
+    };
     
     useEffect(()=> {
-        console.log(markerLis);
+        console.log({markerLis});
     }, [markerLis]);
-    
     return(
         <Grid
             display="flex"
@@ -57,7 +119,8 @@ const Details = forwardRef((props, ref) => {
             {
                 (selected !== -1) && 
                 <Edit 
-                    markItem={markerLis[selected-1]}
+                    markItem={markerLis.find((q) => q._id === selected)}
+                    videoId={props.videoId}
                 />
             }
         </Grid>

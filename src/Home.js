@@ -28,29 +28,64 @@ export default function Home() {
 
     const theme = useTheme();
 
-    const [videoId, setVideoId] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
+    const [edit, setEdit] = useState(false);
+    const [videoId, setVideoId] = useState("650090d7c042a750d6fb5aae");
 
     const detailsRef = useRef(null);
 
     const addNewMarker = (duration) => {
-        // Call the addNewMarker function from the child component using the ref
         if (detailsRef.current) {
             detailsRef.current.addNewMarker(duration);
         }
     };
 
+    const onSave = () => {
+        fetch('http://localhost:8000/videos/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                url: videoUrl,
+                title: "1test_title",
+                description: "1test_description"
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                setVideoId(data.videoid);
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+  
+    }
+
     return(
 
         <StyledGrid>
             <Grid
+
                 sx={{
                     backgroundColor: theme.palette.background.paper,
                     gridArea: "1 / 1 / 17 / 3",
                     overflowY: "scroll",
                     borderRadius: 1,
+                    paddingRight: 0,
                 }}
             >
-                <List>
+                <List
+                    sx={{
+                        width: "100%",
+                    }}
+                >
                     <ListItemButton
                         selected={true}
                     >
@@ -76,11 +111,15 @@ export default function Home() {
                 }}
             >
                 <Search
-                    setVideoId={setVideoId}
+                    videoUrl={videoUrl}
+                    setVideoUrl={setVideoUrl}
+                    edit={edit}
+                    setEdit={setEdit}
+                    onSave={onSave}
                 />
 
                 <Controller
-                    videoId={videoId}
+                    videoUrl={videoUrl}
                     addNewMarker={addNewMarker}
                 />
             </Grid>
@@ -93,6 +132,7 @@ export default function Home() {
             >
                 <Details
                     ref={detailsRef}
+                    videoId={videoId}
                 />
             </Grid>
         </StyledGrid>
